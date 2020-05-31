@@ -1,0 +1,109 @@
+Sub MultipleYearStock()
+    
+    Dim ws As Worksheet
+    For Each ws In Worksheets
+        
+        
+        Dim LastRow As Long
+        Dim Ticker_M As String
+        Dim Opening As Double
+        Dim Closing As Double
+        Dim T_S_Volume As Double
+        Dim Y_Change As Double
+        Dim P_Change As Double
+        Dim Count As Double
+        Dim Greatest_P_I As Double
+        Dim Greatest_P_D As Double
+        Dim Greatest_T_V As Double
+           
+        
+        Opening = 0
+        Closing = 0
+        T_S_Volume = 0
+        Y_Change = 0
+        P_Change = 0
+        Count = 2
+        Greatest_P_I = 0
+        Greatest_P_D = 0
+        Greatest_T_V = 0
+        
+        L_Result = 2
+        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+            ws.Range("I1").Value = "Ticker"
+            ws.Range("J1").Value = "Yearly Change"
+            ws.Range("K1").Value = "Percent Change"
+            ws.Range("L1").Value = "Total Stock Volume"
+            
+            ws.Range("O2").Value = "Greatest % Increase"
+            ws.Range("O3").Value = "Greatest % Decrease"
+            ws.Range("O4").Value = "Greatest Total Volume"
+            ws.Range("P1").Value = "Ticker"
+            ws.Range("Q1").Value = "Value"
+                   
+        For i = 2 To LastRow
+    
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                Ticker = ws.Cells(i, 1).Value
+                ws.Cells(L_Result, 9).Value = Ticker
+                
+                Opening = ws.Cells(Count, 3).Value
+                Closing = ws.Cells(i, 6).Value
+                
+                Y_Change = Closing - Opening
+                    ws.Cells(L_Result, 10).Value = Y_Change
+                    
+                    If Y_Change < 0 Then
+                        ws.Cells(L_Result, 10).Interior.Color = vbRed
+                    ElseIf Y_Change > 0 Then
+                        ws.Cells(L_Result, 10).Interior.Color = vbGreen
+                    End If
+                    
+                    If Opening = 0 Then
+                        P_Change = 0
+                    Else
+                        P_Change = Y_Change / Opening
+                        ws.Cells(L_Result, 11).Value = P_Change
+                        If P_Change > Greatest_P_I Then
+                            Greatest_P_I = P_Change
+                            Greatest_I_Ticker = Ticker
+                        ElseIf P_Change < Greatest_P_D Then
+                            Greatest_P_D = P_Change
+                            Greatest_D_Ticker = Ticker
+                        End If
+                        
+                    End If
+                    
+               T_S_Volume = T_S_Volume + ws.Cells(i, 7).Value
+               ws.Cells(L_Result, 12).Value = T_S_Volume
+                    
+                    If T_S_Volume > Greatest_T_V Then
+                        Greatest_T_V = T_S_Volume
+                        Greatest_V_Ticker = Ticker
+                    End If
+               
+               L_Result = L_Result + 1
+               T_S_Volume = 0
+               Count = i + 1
+            Else
+                T_S_Volume = T_S_Volume + ws.Cells(i, 7).Value
+                
+            End If
+            
+        Next i
+                
+    ws.Range("k:k").NumberFormat = "0.00%"
+    ws.Range("P2").Value = Greatest_I_Ticker
+    ws.Range("P3").Value = Greatest_D_Ticker
+    ws.Range("P4").Value = Greatest_V_Ticker
+    ws.Range("Q2").Value = Greatest_P_I
+    ws.Range("Q3").Value = Greatest_P_D
+    ws.Range("Q4").Value = Greatest_T_V
+    ws.Range("Q2:Q3").NumberFormat = "0.00%"
+   
+   
+   Next ws
+              
+        
+        
+End Sub
